@@ -74,8 +74,8 @@ public class Board {
             for (int j = 0; j < this.size; j++) {
                 if (tiles[i][j] == 0) continue;
                 else if (tiles[i][j] != correct[i][j]) {
-                    int row = (tiles[i][j] - 1) / 3;
-                    int col = (tiles[i][j] - 1) % 3;
+                    int row = (tiles[i][j] - 1) / size;
+                    int col = (tiles[i][j] - 1) % size;
                     total += java.lang.Math.abs(row - i);
                     total += java.lang.Math.abs(col - j);
                 }

@@ -79,7 +79,7 @@ public class Solver {
 
         Node parent = queue.delMin();
         if (isSolvable()) {
-            while (!parent.board.toString().equals(correctBoard.toString())) {
+            while (!parent.board.isGoal()) {
                 Iterable<Board> neighbors = parent.board.neighbors();
                 for (Board neighbor : neighbors) {
                     //  critical optimization
@@ -111,7 +111,7 @@ public class Solver {
         while (true) {
             // this board
             Node thisParent = thisQueue.delMin();
-            if (thisParent.board.toString().equals(correctBoard.toString())) {
+            if (thisParent.board.isGoal()) {
                 return true;
             }
             Iterable<Board> neighbors = thisParent.board.neighbors();
@@ -128,7 +128,7 @@ public class Solver {
 
             // twin board
             Node twinParent = twinQueue.delMin();
-            if (twinParent.board.toString().equals(correctBoard.toString())) {
+            if (twinParent.board.isGoal()) {
                 return false;
             }
             Iterable<Board> twinNeighbors = twinParent.board.neighbors();
