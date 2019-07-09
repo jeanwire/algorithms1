@@ -18,42 +18,46 @@ public class BruteCollinearPoints {
     public BruteCollinearPoints(Point[] points) {
 
         if (points == null) throw new java.lang.IllegalArgumentException("Null argument");
+
+        for (int i = 0; i < points.length; i++) {
+            if (points[i] == null) throw new java.lang.IllegalArgumentException("Null argument");
+        }
+        for (int i = 0; i < points.length - 1; i++) {
+            for (int j = i + 1; j < points.length; j++) {
+                if (points[i].compareTo(points[j]) == 0) {
+                    throw new java.lang.IllegalArgumentException("Repeated point");
+                }
+            }
+        }
         lines = new LineSegment[points.length * points.length];
         numSegments = 0;
 
-        for (int i = 0; i <= points.length - 4; i++) {
-            if (points[i] == null) throw new java.lang.IllegalArgumentException("Null point");
+        for (int i = 0; i < points.length - 3; i++) {
             Point smallest = points[i];
             Point largest = points[i];
 
-            for (int j = i + 1; j <= points.length - 3; j++) {
+            for (int j = i + 1; j < points.length - 2; j++) {
                 if (points[j].compareTo(smallest) < 0) smallest = points[j];
                 else if (points[j].compareTo(largest) > 0) largest = points[j];
 
-                for (int k = j + 1; k <= points.length - 2; k++) {
+                for (int k = j + 1; k < points.length - 1; k++) {
                     if (points[k].compareTo(smallest) < 0) smallest = points[k];
                     else if (points[k].compareTo(largest) > 0) largest = points[k];
 
-                    for (int m = k + 1; m <= points.length - 1; m++) {
+                    for (int m = k + 1; m < points.length; m++) {
                         double slope1 = points[i].slopeTo(points[j]);
                         double slope2 = points[i].slopeTo(points[k]);
 
-                        if (slope1 == Double.NEGATIVE_INFINITY
-                                || slope2 == Double.NEGATIVE_INFINITY) {
-                            throw new java.lang.IllegalArgumentException("Repeated point");
-                        }
-
                         if (slope1 == slope2) {
                             double slope3 = points[i].slopeTo(points[m]);
-                            if (slope3 == Double.NEGATIVE_INFINITY) {
-                                throw new java.lang.IllegalArgumentException("Repeated point");
-                            }
                             if (slope2 == slope3) {
                                 if (points[m].compareTo(smallest) < 0) smallest = points[m];
                                 else if (points[m].compareTo(largest) > 0) largest = points[m];
 
-                                LineSegment line = new LineSegment(smallest, largest);
-                                lines[numSegments++] = line;
+                                if (points[i].compareTo(smallest) == 0) {
+                                    LineSegment line = new LineSegment(smallest, largest);
+                                    lines[numSegments++] = line;
+                                }
                             }
                         }
                         // if the first two slopes aren't equal, just move to next iteration

@@ -20,6 +20,10 @@ public class FastCollinearPoints {
 
         if (points == null) throw new java.lang.IllegalArgumentException("Null argument");
 
+        for (int i = 0; i < points.length; i++) {
+            if (points[i] == null) throw new java.lang.IllegalArgumentException("Null argument");
+        }
+
         lines = new LineSegment[points.length * points.length];
         numSegments = 0;
 
@@ -53,15 +57,8 @@ public class FastCollinearPoints {
                                 if (copy[k].compareTo(smallest) < 0) smallest = copy[k];
                                 else if (copy[k].compareTo(largest) > 0) largest = copy[k];
                             }
-                            LineSegment segment = new LineSegment(smallest, largest);
-                            boolean duplicate = false;
-                            for (int k = 0; k < numSegments; k++) {
-                                if (segment.toString().equals(lines[k].toString())) {
-                                    duplicate = true;
-                                    break;
-                                }
-                            }
-                            if (!duplicate) {
+                            if (copy[0].compareTo(smallest) == 0) {
+                                LineSegment segment = new LineSegment(smallest, largest);
                                 lines[numSegments++] = segment;
                             }
                             counter = 1;

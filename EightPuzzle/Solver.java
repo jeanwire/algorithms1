@@ -156,7 +156,7 @@ public class Solver {
 
         Node node = this.solutionNode;
 
-        while (node.previous != null) {
+        while (node != null) {
             stack.push(node.board);
             node = node.previous;
         }

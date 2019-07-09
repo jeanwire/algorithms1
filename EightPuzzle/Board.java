@@ -12,8 +12,6 @@ public class Board {
 
     private final int size;
     private final int[][] tiles;
-    // private final Board correctBoard;
-    private final int[][] correct;
 
     public Board(int[][] tiles) {
 
@@ -22,16 +20,6 @@ public class Board {
         for (int i = 0; i < size; i++) {
             this.tiles[i] = Arrays.copyOf(tiles[i], size);
         }
-        correct = new int[size][size];
-        int num = 1;
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
-                correct[i][j] = num;
-                num++;
-            }
-        }
-        correct[size - 1][size - 1] = 0;
-        // correctBoard = new Board(correct);
     }
 
     public String toString() {
@@ -58,6 +46,16 @@ public class Board {
     public int hamming() {
         int total = 0;
 
+        int[][] correct = new int[size][size];
+        int num = 1;
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                correct[i][j] = num;
+                num++;
+            }
+        }
+        correct[size - 1][size - 1] = 0;
+
         for (int i = 0; i < this.size; i++) {
             for (int j = 0; j < this.size; j++) {
                 if (tiles[i][j] == 0) continue;
@@ -69,6 +67,16 @@ public class Board {
 
     public int manhattan() {
         int total = 0;
+
+        int[][] correct = new int[size][size];
+        int num = 1;
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                correct[i][j] = num;
+                num++;
+            }
+        }
+        correct[size - 1][size - 1] = 0;
 
         for (int i = 0; i < this.size; i++) {
             for (int j = 0; j < this.size; j++) {
@@ -86,6 +94,16 @@ public class Board {
     }
 
     public boolean isGoal() {
+
+        int[][] correct = new int[size][size];
+        int num = 1;
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                correct[i][j] = num;
+                num++;
+            }
+        }
+        correct[size - 1][size - 1] = 0;
 
         return this.equals(new Board(correct));
     }
