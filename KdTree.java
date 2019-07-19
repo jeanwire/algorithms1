@@ -191,8 +191,11 @@ public class KdTree {
         if (rect == null) throw new java.lang.IllegalArgumentException("null argument");
 
         Queue<Point2D> points = new Queue<Point2D>();
-        Node location = root;
-        range(rect, location, points);
+
+        if (root != null) {
+            Node location = root;
+            range(rect, location, points);
+        }
         return points;
     }
 
@@ -201,43 +204,19 @@ public class KdTree {
             points.enqueue(location.point);
         }
 
-        if (location.direction) {
-            if (rect.xmax() < location.point.x() && location.left != null) {
-                range(rect, location.left, points);
-            }
-            else if (rect.xmin() > location.point.x() && location.right != null) {
-                range(rect, location.right, points);
-            }
-            else {
-                if (location.left != null) {
-                    range(rect, location.left, points);
-                }
-                if (location.right != null) {
-                    range(rect, location.right, points);
-                }
-            }
+        if (location.left != null && location.leftRect.intersects(rect)) {
+            range(rect, location.left, points);
         }
-        else {
-            if (rect.ymax() < location.point.y() && location.left != null) {
-                range(rect, location.left, points);
-            }
-            else if (rect.ymin() > location.point.y() && location.right != null) {
-                range(rect, location.right, points);
-            }
-            else {
-                if (location.left != null) {
-                    range(rect, location.left, points);
-                }
-                if (location.right != null) {
-                    range(rect, location.right, points);
-                }
-            }
+        if (location.right != null && location.rightRect.intersects(rect)) {
+            range(rect, location.right, points);
         }
     }
 
     public Point2D nearest(Point2D p) {
 
         if (p == null) throw new java.lang.IllegalArgumentException("null point");
+
+        if (this.root == null) return null;
 
         if (this.contains(p)) return p;
 
@@ -254,63 +233,31 @@ public class KdTree {
         double currDist = currNode.point.distanceSquaredTo(p);
         if (currDist < nearestDist) {
             nearestDist = currDist;
+            nearestPt = currNode.point;
         }
+        
 
-        // if vertical
-        if (currNode.direction) {
-            if (p.x() < currNode.point.x()) {
-                // search left then search right
-                if (nearestDist > currNode.leftRect.distanceSquaredTo(p)
-                        && currNode.left != null) {
-                    nearestPt = nearest(p, currNode.left, nearestPt, nearestDist);
-                    nearestDist = nearestPt.distanceSquaredTo(p);
-                }
-                if (nearestDist > currNode.rightRect.distanceSquaredTo(p)
-                        && currNode.right != null) {
-                    nearestPt = nearest(p, currNode.right, nearestPt, nearestDist);
-                    // nearestDist = nearestPt.distanceSquaredTo(p);
-                }
+        double leftDist = currNode.leftRect.distanceSquaredTo(p);
+        double rightDist = currNode.rightRect.distanceSquaredTo(p);
+
+        if (leftDist < rightDist) {
+            if (leftDist < nearestDist && currNode.left != null) {
+                nearestPt = nearest(p, currNode.left, nearestPt, nearestDist);
+                nearestDist = nearestPt.distanceSquaredTo(p);
             }
-            else {
-                // search right then search left
-                if (nearestDist > currNode.rightRect.distanceSquaredTo(p)
-                        && currNode.right != null) {
-                    nearestPt = nearest(p, currNode.right, nearestPt, nearestDist);
-                    nearestDist = nearestPt.distanceSquaredTo(p);
-                }
-                if (nearestDist > currNode.leftRect.distanceSquaredTo(p)
-                        && currNode.left != null) {
-                    nearestPt = nearest(p, currNode.left, nearestPt, nearestDist);
-                    // nearestDist = nearestPt.distanceSquaredTo(p);
-                }
+            if (rightDist < nearestDist && currNode.right != null) {
+                nearestPt = nearest(p, currNode.right, nearestPt, nearestDist);
+                // nearestDist = nearestPt.distanceSquaredTo(p);
             }
         }
         else {
-            if (p.y() < currNode.point.y()) {
-                // search left then search right
-                if (nearestDist > currNode.leftRect.distanceSquaredTo(p)
-                        && currNode.left != null) {
-                    nearestPt = nearest(p, currNode.left, nearestPt, nearestDist);
-                    nearestDist = nearestPt.distanceSquaredTo(p);
-                }
-                if (nearestDist > currNode.rightRect.distanceSquaredTo(p)
-                        && currNode.right != null) {
-                    nearestPt = nearest(p, currNode.right, nearestPt, nearestDist);
-                    // nearestDist = nearestPt.distanceSquaredTo(p);
-                }
+            if (rightDist < nearestDist && currNode.right != null) {
+                nearestPt = nearest(p, currNode.right, nearestPt, nearestDist);
+                nearestDist = nearestPt.distanceSquaredTo(p);
             }
-            else {
-                // search right then search left
-                if (nearestDist > currNode.rightRect.distanceSquaredTo(p)
-                        && currNode.right != null) {
-                    nearestPt = nearest(p, currNode.right, nearestPt, nearestDist);
-                    nearestDist = nearestPt.distanceSquaredTo(p);
-                }
-                if (nearestDist > currNode.leftRect.distanceSquaredTo(p)
-                        && currNode.left != null) {
-                    nearestPt = nearest(p, currNode.left, nearestPt, nearestDist);
-                    // nearestDist = nearestPt.distanceSquaredTo(p);
-                }
+            if (leftDist < nearestDist && currNode.left != null) {
+                nearestPt = nearest(p, currNode.left, nearestPt, nearestDist);
+                // nearestDist = nearestPt.distanceSquaredTo(p);
             }
         }
 
@@ -345,5 +292,6 @@ public class KdTree {
 
         Point2D pp = new Point2D(0.75, 0.75);
         System.out.println(tree.contains(pp));
+        System.out.println("nearest: " + tree.nearest(pp));
     }
 }

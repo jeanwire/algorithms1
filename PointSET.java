@@ -57,6 +57,10 @@ public class PointSET {
 
     public Iterable<Point2D> range(RectHV rect) {
 
+        if (rect == null) {
+            throw new java.lang.IllegalArgumentException("null input");
+        }
+
         Stack<Point2D> points = new Stack<Point2D>();
 
         Iterator<Point2D> iter;
